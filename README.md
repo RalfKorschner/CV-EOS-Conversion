@@ -34,22 +34,35 @@ Known caveats right now:
 Below is an explanation of all command line options to `CVEOSConversion.py`:
 
 ```
- -c, --cvphostname  Mandatory, provides CVP host name FQDN or IP for
-                    CVP REST API connection.
+ usage: CVEOSConversion.py [-h] -c CVPHOSTNAME -u CVPUSERNAME [-p CVPPASSWORD]
+                          [-d] [-t] [-s]
 
- -u, --cvpusername	Mandatory, provides CVP username for CVP REST API connection.
-
- -p, --cvppassword	Optional, provides CVP password for CVP REST API connection. If not used, the script will prompt for 
- 			prompt for the password.
- 
- -d, --debug        Optional, default is 'no'. If debug is yes, nothing will
-                    actually be sent to CVP and proposed configs are
-                    written to terminal.
-
--t, --trace         Optional, default is 'no'. If trace is yes, alongside
-                    actual changes to CVP configlets, there will be
-                    trace messages to terminal.  
-```
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CVPHOSTNAME, --cvphostname CVPHOSTNAME
+                        CVP host name FQDN or IP
+  -u CVPUSERNAME, --cvpusername CVPUSERNAME
+                        CVP username
+  -p CVPPASSWORD, --cvppassword CVPPASSWORD
+                        CVP password
+  -d, --debug           If debug is set, nothing will actually be sent to CVP
+                        and proposed configs are written to terminal
+  -t, --trace           If trace is set, alongside actual changes to CVP
+                        configlets, there will be trace messages to terminal
+  -s, --shelldiff       If Shelldiff is set, no changes will be applied. A
+                        <cvphostname>.sh script will be created along we the
+                        orginal <configletname>_OLD and new
+                        <configletname>_NEW CLI Syntax file. The shell script
+                        can be executed to see the Diff -y, Example
+                        ./<cvphostname>.sh > <filename.type>```
 
 Thx, Patrik Olsson, Systems Engineer Arista Networks
+
+Addition: -s, --shelldiff been added to create files for every static configlet.
+ <configlet>_OLD is the original configlet.
+ <configlet>_NEW is the 
+
+
+
+
 
