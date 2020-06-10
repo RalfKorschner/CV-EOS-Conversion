@@ -338,8 +338,8 @@ for configlet in myConfiglets:
 # If shelldiff create files
 #
         if difflg:
-            ofile=str(configlet.name)+"_OLD" 
-            nfile=str(configlet.name)+"_NEW" 
+            ofile=str(configlet.name)+"_OLD.cfg" 
+            nfile=str(configlet.name)+"_NEW.cfg" 
             f_old=open(ofile, "w")
             f_old.write (configlet.config)
             f_old.close ()
