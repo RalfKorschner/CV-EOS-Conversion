@@ -18,6 +18,10 @@
 #   contributors may be used to endorse or promote products derived from
 #   this software without specific prior written permission.
 #
+# Added -s option to create _OLD and _NEW files of all configlets. In addition a .sh script is created to run a diff -y of all configlets.
+# Modified by ralf at arista dot com
+# Date modified June-2020
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -36,7 +40,7 @@ import re
 import string
 import getpass
 import cvp
-
+import os
 #
 # Needed support functions
 #
@@ -268,6 +272,14 @@ ap.add_argument(
     help="If trace is set, alongside actual changes to CVP configlets, there will be trace messages to terminal",
     default=False,
 )
+ap.add_argument(
+    "-s",
+    "--shelldiff",
+    dest="shelldiff",
+    action="store_true",
+    help="If Shelldiff is set, no changes will be applied. A <cvphostname>.sh script will be created along we the orginal <configletname>_OLD and new <configletname>_NEW CLI Syntax file. The shell script can be executed to see the Diff -y, Example ./<cvphostname>.sh > <filename.type>",
+    default=False,
+)
 opts = ap.parse_args()
 
 ## If no password is passed then ask for it.
@@ -284,7 +296,10 @@ host = opts.cvphostname
 user = opts.cvpusername
 debug = opts.debug
 trace = opts.trace
-
+difflg= opts.shelldiff
+if difflg:
+    diffile=host+"_diff.sh"
+    f_diff=open(diffile, "w")
 #
 # Connect and authenticate with CVP server
 #
@@ -303,29 +318,50 @@ myConfiglets = server.getConfiglets()
 #
 
 for configlet in myConfiglets:
-	if configlet.configletType == 'Static':
-		if trace:
-			print("\nWorking on configlet: %s" % ( configlet.name ))
-
-		newConfig = checkCli(configlet.config)
-
+    if configlet.configletType == 'Static':
+        if trace:
+            print("\nWorking on configlet: %s" % ( configlet.name ))
+        newConfig = checkCli(configlet.config)
+        if newConfig is not configlet.config:
+            if trace or debug:
+                print("Config changed")
 #
 # If debug is yes, print all proposed configuration to terminal
 #
 
-		if debug:
-			print("\n\n==================================================================")
-			print("Configlet: %s" % ( configlet.name ))
-			print("==================================================================")
-			print("%s" % ( newConfig ))
+        if debug:
+            print("\n\n==================================================================")
+            print("Configlet: %s" % ( configlet.name ))
+            print("==================================================================")
+            print("%s" % ( newConfig ))
+#
+# If shelldiff create files
+#
+        if difflg:
+            ofile=str(configlet.name)+"_OLD" 
+            nfile=str(configlet.name)+"_NEW" 
+            f_old=open(ofile, "w")
+            f_old.write (configlet.config)
+            f_old.close ()
+            f_new=open(nfile, "w")
+            f_new.write (newConfig)
+            f_new.close ()
+            f_diff.write("echo \n")
+            f_diff.write("echo \n")
+            f_diff.write("echo Comparing "+str(configlet.name)+"\n")
+            f_diff.write("echo \n")
+            f_diff.write("echo \n")
+            f_diff.write("diff -y "+ofile+" "+nfile+"\n")
 
 #
 # If debug is no, update all configlets with CLI changes
 #
 
-		if not debug:
-			if trace:
-				print("Updating configlet: %s" % ( configlet.name))
-
-			configlet.config = newConfig
-			server.updateConfiglet( configlet )
+        if not debug:
+            if trace and not difflg:
+                print("Updating configlet: %s" % ( configlet.name))
+                configlet.config = newConfig
+                server.updateConfiglet( configlet )
+if difflg:
+    f_diff.close()
+    os.chmod(diffile, 0o775)
