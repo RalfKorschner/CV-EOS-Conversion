@@ -5,7 +5,7 @@ Even though this script is best effort supported, please send any issues you fin
 
 I also want to give credit to Steve Ulrich, Thomas Smith and Jonathan Smith for reviewing and contributing to the code and regexes. They have been a great help debugging the tool!
 
-This tool is meant to be used from a Linux Python script host (Python 2.6, 2.7 and 3.x) and connect to CVPs REST API. Current tested CVP version is 2019.1.x. There is work put into making the tool CVP 2020.1.x compatible. The script itself uses the provided CloudVisiob Python based API.  All files needed to use the Python based API is provided in this repo.  Make sure to clone all files to your directory.
+This tool is meant to be used from a Linux Python script host (Python 2.6, 2.7 and 3.x) and connect to CVPs REST API. Current tested CVP version is 2019.1.x. There is work put into making the tool CVP 2020.1.x compatible. The script itself uses the provided CloudVision Python based API.  All files needed to use the Python based API is provided in this repo.  Make sure to clone all files to your directory.
 
 There is a `TEST-CONFIGLET.TXT` which can be pasted into a static configlet.  The file have all old CLI configs that will be changed. The thought here is to have something to test on.
 
@@ -62,7 +62,11 @@ Addition: -s, --shelldiff been added to create files for every static configlet.
  <configlet>_OLD is the original configlet.
  <configlet>_NEW is the 
 
+Note: For CVP 2020 version, please replace 
+  cvp.py
+  errorCodes.py
+  cvpServices.py
+ 
+From the Arista SW portal and download cvp-tools-2020.1.1.tgz. Unzip and replace the above files.
 
-
-
-
+thx, Ralf Korschner, SE Arista Networks
