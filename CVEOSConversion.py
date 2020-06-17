@@ -358,8 +358,9 @@ for configlet in myConfiglets:
 #
 
         if not debug:
-            if trace and not difflg:
+            if trace:
                 print("Updating configlet: %s" % ( configlet.name))
+            if not difflg:
                 configlet.config = newConfig
                 server.updateConfiglet( configlet )
 if difflg:
